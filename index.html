@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANWARSARCADE</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicon (Default: Placeholder) -->
+    <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#111827',
+                        'secondary-gray': '#1f2937',
+                        'accent-green': '#10b981',
+                        'panic-red': '#ef4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for the responsive iframe container */
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            /* INCREASED: Giving the game more vertical space */
+            min-height: 90vh; 
+        }
+        /* New class to remove vertical padding from main when game is open */
+        .main-no-padding {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+    </style>
+</head>
+<body class="bg-primary-dark text-gray-100 font-sans min-h-screen">
+
+    <!-- HEADER -->
+    <header class="bg-secondary-gray shadow-lg sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto flex justify-between items-center p-4">
+            <h1 id="app-title" class="text-2xl font-bold text-accent-green cursor-pointer" onclick="goHome()">
+                ANWARSARCADE
+            </h1>
+            <div class="space-x-4 flex items-center">
+                <!-- SETTINGS BUTTON -->
+                <button 
+                    class="px-3 py-1 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm font-medium transition duration-150 shadow-md active:scale-95"
+                    onclick="openSettings()"
+                >
+                    Settings
+                </button>
+                <!-- CLOAK BUTTON -->
+                <button 
+                    id="cloak-btn"
+                    class="px-3 py-1 bg-gray-600 hover:bg-red-500 rounded-lg text-sm font-medium transition duration-150 shadow-md active:scale-95"
+                    onclick="toggleCloak()"
+                >
+                    Cloak: Off
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="max-w-6xl mx-auto p-4 md:p-8">
+
+        <!-- GRID VIEW (Default) -->
+        <div id="grid-view" class="block">
+            <h2 class="text-3xl font-extrabold text-white mb-6 border-l-4 border-accent-green pl-3">
+                🔥 Top Picks
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- MINECRAFT (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/minecraft/index.html', 'Minecraft Classic')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/22c55e/ffffff?text=Minecraft" alt="Minecraft Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Minecraft</h3>
+                        <p class="text-gray-400 text-sm mt-1">Sandbox / Survival</p>
+                    </div>
+                </div>
+
+                <!-- SEARCH UNBLOCKED (Proxy Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://xn--8ug.yaha.click/?cdURL=aHR0cHM6Ly9wcm94eWl1bS5jb20v', 'Unblocked Search')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/1e40af/ffffff?text=Proxy+Search" alt="Proxy Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Unblocked Search</h3>
+                        <p class="text-gray-400 text-sm mt-1">Utility / Browser</p>
+                    </div>
+                </div>
+
+                <!-- RAGDOLL ARCHERS (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/ragdoll_archers/index.html', 'Ragdoll Archers')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/ef4444/ffffff?text=Ragdoll+Archers" alt="Ragdoll Archers Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Ragdoll Archers</h3>
+                        <p class="text-gray-400 text-sm mt-1">Physics / Action</p>
+                    </div>
+                </div>
+
+                <!-- DRIVE MAD (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/drive_mad/index.html', 'Drive Mad')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/fb923c/000000?text=Drive+Mad" alt="Drive Mad Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Drive Mad</h3>
+                        <p class="text-gray-400 text-sm mt-1">Driving / Physics</p>
+                    </div>
+                </div>
+
+                <!-- RAGDOLL HIT (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/ragdoll_hit/index.html', 'Ragdoll Hit')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/6d28d9/ffffff?text=Ragdoll+Hit" alt="Ragdoll Hit Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Ragdoll Hit</h3>
+                        <p class="text-gray-400 text-sm mt-1">Physics / Destruction</p>
+                    </div>
+                </div>
+
+                <!-- BITLIFE (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/bitlife/index.html', 'BitLife')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/ec4899/ffffff?text=BitLife" alt="BitLife Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">BitLife</h3>
+                        <p class="text-gray-400 text-sm mt-1">Life Simulator / Text RPG</p>
+                    </div>
+                </div>
+
+                <!-- CLASH OF VIKINGS (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/clash_royale/index.html', 'Clash of Vikings')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/34d399/000000?text=Clash+of+Vikings" alt="Clash of Vikings Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Clash of Vikings</h3>
+                        <p class="text-gray-400 text-sm mt-1">Strategy / Tower Defense</p>
+                    </div>
+                </div>
+
+                <!-- VOLLEY RANDOM (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/volley_random/index.html', 'Volley Random')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/f97316/ffffff?text=Volley+Random" alt="Volley Random Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Volley Random</h3>
+                        <p class="text-gray-400 text-sm mt-1">Sports / Physics</p>
+                    </div>
+                </div>
+
+                <!-- COOKIE CLICKER (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/cookie_clicker/index.html', 'Cookie Clicker')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/fcd34d/000000?text=Cookie+Clicker" alt="Cookie Clicker Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Cookie Clicker</h3>
+                        <p class="text-gray-400 text-sm mt-1">Idle / Incremental</p>
+                    </div>
+                </div>
+
+                <!-- MOTO X3M (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/moto_x3m_3/index.html', 'Moto X3M')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/ff0000/000000?text=Moto+X3M" alt="Moto X3M Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Moto X3M</h3>
+                        <p class="text-gray-400 text-sm mt-1">Driving / Stunts</p>
+                    </div>
+                </div>
+
+                <!-- SOLAR SMASH (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/solar_smash/index.html', 'Solar Smash')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/3b82f6/ffffff?text=Solar+Smash" alt="Solar Smash Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Solar Smash</h3>
+                        <p class="text-gray-400 text-sm mt-1">Destruction / Simulation (⚠️ Slow Load. Go Fullscreen!)</p>
+                    </div>
+                </div>
+                
+                <!-- MONKEY MART (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/monkey_mart/index.html', 'Monkey Mart')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/f59e0b/000000?text=Monkey+Mart" alt="Monkey Mart Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Monkey Mart</h3>
+                        <p class="text-gray-400 text-sm mt-1">Management / Idle</p>
+                    </div>
+                </div>
+
+                <!-- BLOCKY PUZZLE (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/blocky_puzzle/index.html', 'Blocky Puzzle')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/84cc16/1f2937?text=Blocky+Puzzle" alt="Blocky Puzzle Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Blocky Puzzle</h3>
+                        <p class="text-gray-400 text-sm mt-1">Puzzle / Casual</p>
+                    </div>
+                </div>
+                
+                <!-- GUN SPIN (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/gun_spin/index.html', 'Gun Spin')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/333333/ffffff?text=Gun+Spin" alt="Gun Spin Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Gun Spin</h3>
+                        <p class="text-gray-400 text-sm mt-1">Physics / Arcade</p>
+                    </div>
+                </div>
+
+                <!-- POLY TRACK (Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/polytrack/index.html', 'Poly Track')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/a855f7/ffffff?text=Poly+Track" alt="Poly Track Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Poly Track</h3>
+                        <p class="text-gray-400 text-sm mt-1">Racing / Arcade</p>
+                    </div>
+                </div>
+
+                <!-- JETPACK JOYRIDE (NEW Game Card) -->
+                <div 
+                    class="game-card bg-secondary-gray rounded-xl shadow-2xl overflow-hidden transform transition duration-300 hover:scale-[1.03] hover:shadow-accent-green/50 cursor-pointer"
+                    onclick="playGame('https://db.ducklit.com/html/jetpack_joyride/index.html', 'Jetpack Joyride')"
+                >
+                    <div class="h-40 bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
+                        <img src="https://placehold.co/400x160/3498db/ffffff?text=Jetpack+Joyride" alt="Jetpack Joyride Thumbnail" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold text-white">Jetpack Joyride</h3>
+                        <p class="text-gray-400 text-sm mt-1">Arcade / Endless Runner</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- GAME PLAYER VIEW (Hidden by default) -->
+        <div id="game-view" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <button class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition duration-150 active:scale-95" onclick="goHome()">
+                    ← Back to Hub
+                </button>
+                <div class="space-x-3">
+                    <!-- NEW: PANIC BUTTON -->
+                    <button class="px-4 py-2 bg-panic-red text-white font-semibold rounded-lg hover:bg-red-600 transition duration-150 active:scale-95" onclick="triggerPanic()">
+                        🚨 PANIC
+                    </button>
+                    <!-- FULLSCREEN BUTTON -->
+                    <button class="px-4 py-2 bg-accent-green text-primary-dark font-semibold rounded-lg hover:bg-teal-500 transition duration-150 active:scale-95" onclick="toggleFullscreen()">
+                        [ ] Fullscreen
+                    </button>
+                </div>
+            </div>
+            
+            <div id="iframe-wrapper" class="iframe-container bg-black rounded-xl overflow-hidden shadow-2xl">
+                <!-- Iframe is injected here -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center p-4 bg-secondary-gray mt-8 text-gray-400 text-xs">
+        &copy; 2024 ANWARSARCADE. All rights reserved. Game content is hosted externally.
+    </footer>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" onclick="closeSettings(event)">
+        <div class="bg-secondary-gray w-full max-w-md rounded-xl shadow-2xl p-6 transform transition-all" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold text-accent-green mb-4">Settings</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="panic-link-input" class="block text-sm font-medium text-gray-300 mb-1">
+                        Panic Button URL (E.g., https://classroom.google.com)
+                    </label>
+                    <input 
+                        type="url" 
+                        id="panic-link-input" 
+                        class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-accent-green focus:border-accent-green"
+                        placeholder="Enter URL to redirect to"
+                    >
+                </div>
+                <div>
+                    <label for="panic-title-input" class="block text-sm font-medium text-gray-300 mb-1">
+                        Panic Button Title (E.g., Google Classroom)
+                    </label>
+                    <input 
+                        type="text" 
+                        id="panic-title-input" 
+                        class="w-full p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-accent-green focus:border-accent-green"
+                        placeholder="Enter the fake tab title"
+                    >
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button 
+                        class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition duration-150 active:scale-95"
+                        onclick="closeSettings()"
+                    >
+                        Close
+                    </button>
+                    <button 
+                        class="px-4 py-2 bg-accent-green text-primary-dark font-semibold rounded-lg hover:bg-teal-500 transition duration-150 active:scale-95"
+                        onclick="saveSettings()"
+                    >
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // --- CONSTANTS ---
+        const HUB_TITLE = 'ANWARSARCADE';
+        const defaultPanic = { url: 'https://classroom.google.com', title: 'Google Classroom' };
+        const PANIC_KEY = 'hub_panic_settings';
+
+        // --- STATE & DOM REFERENCES ---
+        let panicSettings = { ...defaultPanic };
+
+        const gridView = document.getElementById('grid-view');
+        const gameView = document.getElementById('game-view');
+        const iframeWrapper = document.getElementById('iframe-wrapper');
+        const cloakBtn = document.getElementById('cloak-btn');
+        const appTitle = document.getElementById('app-title');
+        const favicon = document.getElementById('favicon');
+        const mainContent = document.getElementById('main-content');
+        const settingsModal = document.getElementById('settings-modal');
+        const panicLinkInput = document.getElementById('panic-link-input');
+        const panicTitleInput = document.getElementById('panic-title-input');
+
+        let isCloaked = false;
+        let originalTitle = document.title;
+        let originalFavicon = favicon.href;
+
+        // --- LOCAL STORAGE STATE MANAGEMENT ---
+        const loadPanicLink = () => {
+            try {
+                const storedSettings = localStorage.getItem(PANIC_KEY);
+                if (storedSettings) {
+                    panicSettings = JSON.parse(storedSettings);
+                }
+            } catch (e) {
+                console.error("Error loading panic link from localStorage:", e);
+                panicSettings = { ...defaultPanic };
+            }
+        };
+
+        const savePanicLink = (url, title) => {
+            try {
+                const newSettings = { url, title };
+                localStorage.setItem(PANIC_KEY, JSON.stringify(newSettings));
+                panicSettings = newSettings;
+                return true;
+            } catch (e) {
+                console.error("Error saving panic link to localStorage:", e);
+                return false;
+            }
+        };
+
+        const initApp = () => {
+            loadPanicLink();
+            // Ensure header text is set correctly on load (already handled by HTML, but good practice)
+            appTitle.textContent = HUB_TITLE;
+        }
+
+        // --- PANIC AND SETTINGS LOGIC ---
+        window.triggerPanic = function() {
+            document.title = panicSettings.title;
+            favicon.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%232563EB%22/></svg>';
+            window.location.replace(panicSettings.url);
+        }
+
+        window.openSettings = function() {
+            panicLinkInput.value = panicSettings.url;
+            panicTitleInput.value = panicSettings.title;
+            settingsModal.classList.remove('hidden');
+        }
+
+        window.closeSettings = function(event) {
+            if (!event || event.currentTarget === settingsModal) {
+                settingsModal.classList.add('hidden');
+            }
+        }
+        
+        window.saveSettings = function() {
+            const newUrl = panicLinkInput.value.trim();
+            const newTitle = panicTitleInput.value.trim() || 'Classwork';
+
+            if (!newUrl) {
+                // IMPORTANT: Replacing alert() with a console warning for the user environment constraints.
+                console.warn('URL cannot be empty!');
+                return;
+            }
+
+            const success = savePanicLink(newUrl, newTitle);
+            
+            if (success) {
+                settingsModal.classList.add('hidden');
+                console.log('Panic settings saved successfully to local storage.');
+            }
+        }
+
+        // --- GAME HUB FUNCTIONS ---
+        window.playGame = function(url, title) {
+            iframeWrapper.innerHTML = ''; 
+
+            const iframe = document.createElement('iframe');
+            iframe.src = url;
+            iframe.id = 'game-frame';
+            iframe.className = 'w-full h-full';
+            iframe.allow = "autoplay; fullscreen; camera; focus-without-user-activation *; monetization; gamepad; xr-spatial-tracking";
+            iframe.name = title;
+            iframe.setAttribute('sandbox', 'allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-scripts allow-same-origin allow-downloads');
+            
+            iframeWrapper.appendChild(iframe);
+
+            gridView.classList.add('hidden');
+            gameView.classList.remove('hidden');
+            mainContent.classList.add('main-no-padding'); 
+            
+            if (!isCloaked) {
+                document.title = title;
+            }
+        }
+
+        window.goHome = function() {
+            iframeWrapper.innerHTML = ''; 
+            
+            gameView.classList.add('hidden');
+            gridView.classList.remove('hidden');
+            mainContent.classList.remove('main-no-padding'); 
+
+            if (!isCloaked) {
+                document.title = originalTitle;
+            }
+        }
+
+        window.toggleFullscreen = function() {
+            const elem = document.getElementById("game-frame");
+            if (!elem) {
+                console.warn("No game frame active to go fullscreen.");
+                return;
+            }
+
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => {
+                    // IMPORTANT: Replacing alert() with a console warning for the user environment constraints.
+                    console.warn("Fullscreen blocked. You might need to click the frame first.", err); 
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        window.toggleCloak = function() {
+            isCloaked = !isCloaked;
+
+            if (isCloaked) {
+                // Cloak Mode: ON
+                cloakBtn.textContent = 'Cloak: ON';
+                cloakBtn.classList.remove('bg-gray-600', 'hover:bg-red-500');
+                cloakBtn.classList.add('bg-accent-green', 'hover:bg-accent-green/80', 'text-primary-dark');
+                
+                document.title = panicSettings.title;
+                favicon.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%232563EB%22/></svg>';
+                appTitle.textContent = 'Classwork';
+
+            } else {
+                // Cloak Mode: OFF
+                cloakBtn.textContent = 'Cloak: Off';
+                cloakBtn.classList.remove('bg-accent-green', 'hover:bg-accent-green/80', 'text-primary-dark');
+                cloakBtn.classList.add('bg-gray-600', 'hover:bg-red-500');
+
+                document.title = originalTitle;
+                favicon.href = originalFavicon;
+                appTitle.textContent = HUB_TITLE; // <-- Resetting to ANWARSARCADE
+            }
+        }
+        
+        // Start the application
+        initApp();
+    </script>
+</body>
+</html>
