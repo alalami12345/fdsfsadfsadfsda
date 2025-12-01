@@ -208,7 +208,7 @@
 
                 <div class="flex items-center gap-3">
                     <button id="mobile-controls-toggle" onclick="toggleMobileControls()" class="hidden md:hidden text-gray-400 hover:text-white" title="Toggle Controls">
-                        <i class="ph-fill ph-game-controller text-xl"></i>
+                        <i id="controls-icon" class="ph-fill ph-game-controller text-xl"></i>
                     </button>
                     <div class="h-4 w-px bg-white/10"></div>
                     <button class="text-panic hover:text-red-400 transition" onclick="triggerPanic()" title="Panic Button">
@@ -288,9 +288,9 @@
         const STORAGE_KEY_FAV = 'anwars_favs_v1';
         const STORAGE_KEY_PANIC = 'anwars_panic_v1';
 
-        // Updated Game List (19 Games)
+        // Updated Game List (24 Games)
         const gamesDB = [
-            // Previous 13 games
+            // Existing games (19)
             { id: 'mc', title: 'Minecraft Classic', tag: 'Sandbox', url: 'https://db.ducklit.com/html/minecraft/index.html', img: 'https://placehold.co/400x250/22c55e/ffffff?text=Minecraft' },
             { id: 'retro', title: 'Retro Bowl', tag: 'Sports', url: 'https://db.ducklit.com/html/retro_bowl/index.html', img: 'https://placehold.co/400x250/ea580c/ffffff?text=Retro+Bowl' },
             { id: 'slope', title: 'Slope (V1)', tag: 'Arcade', url: 'https://db.ducklit.com/html/slope/index.html', img: 'https://placehold.co/400x250/10b981/ffffff?text=Slope+1' },
@@ -304,14 +304,19 @@
             { id: 'slope2', title: 'Slope 2', tag: 'Arcade', url: 'https://db.ducklit.com/html/slope/index.html', img: 'https://placehold.co/400x250/065f46/ffffff?text=Slope+2' },
             { id: 'run3', title: 'Run 3', tag: 'Runner', url: 'https://db.ducklit.com/html/run3/index.html', img: 'https://placehold.co/400x250/3730a3/ffffff?text=Run+3' },
             { id: 'hole', title: 'Hole.io', tag: 'Arcade', url: 'https://db.ducklit.com/html/holeio/index.html', img: 'https://placehold.co/400x250/be123c/ffffff?text=Hole.io' },
-            
-            // Remaining New Additions (after removals)
+            { id: 'ragdoll', title: 'Ragdoll Hit', tag: 'Physics', url: 'https://db.ducklit.com/html/ragdoll_hit/index.html', img: 'https://placehold.co/400x250/f87171/000000?text=Ragdoll+Hit' },
             { id: 'amongus', title: 'Among Us', tag: 'Puzzles', url: 'https://db.ducklit.com/html/among_us/index.html', img: 'https://placehold.co/400x250/dc2626/ffffff?text=Among+Us' },
             { id: 'ducklife', title: 'Duck Life 4', tag: 'Sim/Race', url: 'https://db.ducklit.com/html/duck_life_4/index.html', img: 'https://placehold.co/400x250/f59e0b/000000?text=Duck+Life' },
             { id: 'fnaf', title: 'Five Nights at Freddy\'s', tag: 'Horror', url: 'https://db.ducklit.com/html/fnaf/index.html', img: 'https://placehold.co/400x250/4b5563/ffffff?text=FNAF' },
             { id: 'madalin', title: 'Madalin Stunt Cars 2', tag: 'Driving', url: 'https://db.ducklit.com/html/madalin_stunt_cars_2/index.html', img: 'https://placehold.co/400x250/000000/3b82f6?text=Madalin+Cars' },
             { id: 'happy', title: 'Happy Wheels', tag: 'Physics', url: 'https://db.ducklit.com/html/happy_wheels/index.html', img: 'https://placehold.co/400x250/fbbf24/000000?text=Happy+Wheels' },
-            { id: 'flappy', title: 'Flappy Bird', tag: 'Arcade', url: 'https://db.ducklit.com/html/flappy_bird/index.html', img: 'https://placehold.co/400x250/7c3aed/ffffff?text=Flappy+Bird' }
+            { id: 'flappy', title: 'Flappy Bird', tag: 'Arcade', url: 'https://db.ducklit.com/html/flappy_bird/index.html', img: 'https://placehold.co/400x250/7c3aed/ffffff?text=Flappy+Bird' },
+
+            // NEW ADDITIONS
+            { id: 'cookie', title: 'Cookie Clicker', tag: 'Idle', url: 'https://db.ducklit.com/html/cookie_clicker/index.html', img: 'https://placehold.co/400x250/312e81/ffffff?text=Cookie+Clicker' },
+            { id: 'volley', title: 'Volley Random', tag: 'Sports', url: 'https://db.ducklit.com/html/volley_random/index.html', img: 'https://placehold.co/400x250/1e40af/ffffff?text=Volley+Random' },
+            { id: 'gunspin', title: 'GunSpin', tag: 'Action', url: 'https://db.ducklit.com/html/gun_spin/', img: 'https://placehold.co/400x250/7f1d1d/ffffff?text=GunSpin' }, 
+            { id: '2048', title: '2048', tag: 'Puzzle', url: 'https://db.ducklit.com/html/2048/index.html', img: 'https://placehold.co/400x250/fcd34d/000000?text=2048' }
         ];
 
         let state = {
@@ -329,6 +334,8 @@
             // Show toggle if mobile
             if(state.isMobile) {
                 document.getElementById('mobile-controls-toggle').classList.remove('hidden');
+                // Initialize the icon state
+                updateControlsIcon(false);
             }
 
             // Render
@@ -416,6 +423,7 @@
             iframe.src = game.url;
             iframe.className = "w-full h-full border-none opacity-0 transition-opacity duration-500";
             iframe.allow = "autoplay; fullscreen; gamepad; focus-without-user-activation *";
+            // CRITICAL: Sandbox allows the game to run scripts while retaining security constraints.
             iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups";
             
             iframe.onload = () => {
@@ -428,7 +436,9 @@
 
             // Auto-Enable Mobile Controls if on Phone
             if(state.isMobile) {
-                document.getElementById('mobile-controls').classList.remove('hidden');
+                const controls = document.getElementById('mobile-controls');
+                controls.classList.remove('hidden');
+                updateControlsIcon(true);
                 notify('Touch Controls Enabled', 'success');
             }
 
@@ -444,18 +454,18 @@
             if(!state.isCloaked) document.title = HUB_TITLE;
         }
 
-        // --- THE "SMOOTH" CONTROL LOGIC (PointerEvents) ---
+        // --- THE *FIXED* CONTROL LOGIC (PointerEvents) ---
         function initMobileControls() {
             const buttons = document.querySelectorAll('.arcade-btn');
 
             buttons.forEach(btn => {
-                // We use pointerdown/up for fastest response (faster than touch)
+                // pointerdown handles touch/mouse/pen start
                 btn.addEventListener('pointerdown', (e) => {
-                    e.preventDefault(); // Prevent focus stealing
+                    e.preventDefault(); // CRITICAL: Prevents unwanted browser scroll/zoom/context menu
                     btn.classList.add('pressed');
-                    btn.setPointerCapture(e.pointerId); // Lock touch to this button
+                    btn.setPointerCapture(e.pointerId); // CRITICAL: Locks the input capture to the button
                     
-                    if(navigator.vibrate) navigator.vibrate(5); // Sharp tick
+                    if(navigator.vibrate) navigator.vibrate(5); // Haptic feedback
                     
                     const key = btn.dataset.key;
                     const alt = btn.dataset.alt;
@@ -466,8 +476,10 @@
                 });
 
                 const handleRelease = (e) => {
+                    if (!btn.classList.contains('pressed')) return; // Avoid double release
                     e.preventDefault();
                     btn.classList.remove('pressed');
+                    btn.releasePointerCapture(e.pointerId);
                     
                     const key = btn.dataset.key;
                     const alt = btn.dataset.alt;
@@ -476,14 +488,15 @@
                     if(alt) sendKey(alt, 'keyup');
                 };
 
+                // Release on Up, Cancel (finger dragged off), or Leave (finger slid off button)
                 btn.addEventListener('pointerup', handleRelease);
-                btn.addEventListener('pointercancel', handleRelease); // Critical: Finger drags off screen
-                btn.addEventListener('pointerleave', handleRelease); // Critical: Finger slides off button
+                btn.addEventListener('pointercancel', handleRelease); 
+                btn.addEventListener('pointerleave', handleRelease); 
             });
         }
 
         function sendKey(key, type) {
-            // 1. Send to Main Window
+            // 1. Dispatch Key Event
             const event = new KeyboardEvent(type, {
                 key: key,
                 code: keyToCode(key),
@@ -495,12 +508,13 @@
 
             // 2. Attempt to refocus iframe (fixes some games losing focus)
             const iframe = document.querySelector('iframe');
-            if(iframe && document.activeElement !== iframe) {
-                iframe.focus();
+            if(iframe) {
+                iframe.contentWindow.focus();
             }
         }
 
         function keyToCode(key) {
+            // Mapping for consistent KeyboardEvent creation
             const map = {
                 'ArrowUp': 'ArrowUp', 'ArrowDown': 'ArrowDown', 'ArrowLeft': 'ArrowLeft', 'ArrowRight': 'ArrowRight',
                 'w': 'KeyW', 'a': 'KeyA', 's': 'KeyS', 'd': 'KeyD',
@@ -509,10 +523,26 @@
             return map[key] || 'Unidentified';
         }
 
+        function updateControlsIcon(isControlsVisible) {
+            const icon = document.getElementById('controls-icon');
+            if (isControlsVisible) {
+                icon.classList.remove('ph-game-controller-simple');
+                icon.classList.add('ph-game-controller');
+                icon.style.color = 'var(--accent-glow)'; // Subtle glow to show it's active
+            } else {
+                icon.classList.remove('ph-game-controller');
+                icon.classList.add('ph-game-controller-simple');
+                icon.style.color = ''; // Reset color
+            }
+        }
+
         window.toggleMobileControls = () => {
             const el = document.getElementById('mobile-controls');
-            el.classList.toggle('hidden');
-            notify(el.classList.contains('hidden') ? 'Controls OFF' : 'Controls ON', 'info');
+            const isVisible = el.classList.toggle('hidden');
+            
+            updateControlsIcon(!isVisible);
+
+            notify(!isVisible ? 'Controls ON' : 'Controls OFF', 'info');
         }
 
         // --- UTILITIES ---
